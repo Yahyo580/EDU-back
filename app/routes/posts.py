@@ -52,8 +52,22 @@ def create_post(data: PostIn):
 
 
 @router.delete("/{pid}")
-def delete_post(pid: int):
+def delete_post(pid: int, by_name: str = "", by_role: str = ""):
+    """E'lonni o'chirish.
+
+    Ustoz/admin istalgan e'lonni o'chira oladi, o'quvchi esa faqat o'zinikini.
+    """
     c = conn()
+    post = c.execute("SELECT * FROM posts WHERE id=?", (pid,)).fetchone()
+    if post is None:
+        c.close()
+        raise HTTPException(404, "E'lon topilmadi")
+
+    is_staff = by_role in ("teacher", "admin")
+    if not is_staff and post["author"] != by_name:
+        c.close()
+        raise HTTPException(403, "Faqat o'z e'loningizni o'chira olasiz")
+
     c.execute("DELETE FROM posts WHERE id=?", (pid,))
     c.execute("DELETE FROM comments WHERE post_id=?", (pid,))
     c.commit()

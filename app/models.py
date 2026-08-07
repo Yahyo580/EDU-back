@@ -50,3 +50,51 @@ class PostIn(BaseModel):
 class CommentIn(BaseModel):
     author: str
     text: str
+
+
+class ScheduleIn(BaseModel):
+    day: str
+    time: str = ""
+    subject: str
+    group: str = ""
+    teacher: str = ""
+    room: str = ""
+
+
+class HomeworkIn(BaseModel):
+    title: str
+    group: str = ""
+    subject: str = ""
+    text: str = ""
+    deadline: str = ""
+    author: str = ""
+
+
+class SubmitIn(BaseModel):
+    student_id: int
+    student_name: str = ""
+    done: bool = True
+
+
+class AvatarIn(BaseModel):
+    avatar: str = ""
+
+
+class MessageIn(BaseModel):
+    name: str = ""
+    contact: str = ""
+    text: str
+
+
+class ProfileIn(BaseModel):
+    """Profilni tahrirlash: faqat berilgan (None emas) maydonlar yangilanadi."""
+    group: Optional[str] = None
+    age: Optional[str] = None
+    parents: Optional[str] = None
+    parent_phone: Optional[str] = None
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    subject: Optional[str] = None
+    experience: Optional[str] = None
+    education: Optional[str] = None
+    about: Optional[str] = None

@@ -57,6 +57,44 @@ CREATE TABLE IF NOT EXISTS comments (
   author  TEXT,
   text    TEXT
 );
+
+CREATE TABLE IF NOT EXISTS schedule (
+  id      INTEGER PRIMARY KEY AUTOINCREMENT,
+  day     TEXT NOT NULL,               -- Dushanba | Seshanba | ...
+  time    TEXT NOT NULL,               -- 14:00 - 15:30
+  subject TEXT NOT NULL,
+  "group" TEXT DEFAULT '',
+  teacher TEXT DEFAULT '',
+  room    TEXT DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS homeworks (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  title      TEXT NOT NULL,
+  "group"    TEXT DEFAULT '',
+  subject    TEXT DEFAULT '',
+  text       TEXT DEFAULT '',
+  deadline   TEXT DEFAULT '',
+  author     TEXT DEFAULT '',
+  created_at TEXT DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS submissions (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  homework_id  INTEGER NOT NULL,
+  student_id   INTEGER NOT NULL,
+  student_name TEXT DEFAULT '',
+  submitted_at TEXT DEFAULT '',
+  UNIQUE(homework_id, student_id)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  name       TEXT DEFAULT '',
+  contact    TEXT DEFAULT '',
+  text       TEXT DEFAULT '',
+  created_at TEXT DEFAULT ''
+);
 """
 
 
@@ -73,7 +111,10 @@ def init():
     c.executescript(SCHEMA)
 
     have = {r["name"] for r in c.execute("PRAGMA table_info(users)")}
-    for column in ("parent_phone", "address", "token"):
+    for column in (
+        "parent_phone", "address", "token", "avatar",
+        "subject", "experience", "education", "about",
+    ):
         if column not in have:
             c.execute(f"ALTER TABLE users ADD COLUMN {column} TEXT DEFAULT ''")
 
