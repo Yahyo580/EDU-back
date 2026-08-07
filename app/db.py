@@ -1,8 +1,23 @@
 """Baza bilan ishlaydigan joy. Hech qanday sehr yo'q - oddiy sqlite3."""
 
 import sqlite3
+from pathlib import Path
 
 from .config import DB_PATH
+
+
+def _db_file():
+    """DB_PATH papkasi yo'q bo'lsa uni yaratamiz. Iloji bo'lmasa (masalan Railway'da
+    /data volume ulanmagan bo'lsa) xatoga yo'l qo'ymaymiz - lokal faylga tushamiz."""
+    path = Path(DB_PATH)
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        return str(path)
+    except OSError:
+        return "edu.db"
+
+
+_DB_FILE = _db_file()
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS users (
@@ -100,7 +115,7 @@ CREATE TABLE IF NOT EXISTS messages (
 
 def conn():
     """Har safar yangi ulanish ochamiz - kichik loyiha uchun shunisi yetarli."""
-    c = sqlite3.connect(DB_PATH)
+    c = sqlite3.connect(_DB_FILE)
     c.row_factory = sqlite3.Row
     return c
 
