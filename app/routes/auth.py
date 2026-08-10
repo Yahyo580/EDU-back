@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter, HTTPException
 
-from ..config import ACCESS_TOKEN
+from ..config import STAFF_TOKENS
 from ..db import clean_row, conn
 from ..models import LoginIn
 from ..utils import check_name, now_text
@@ -62,8 +62,8 @@ def login_student(c, user, name, password):
 
 
 def login_staff(c, user, name, token, role):
-    """Ustoz va admin: ism + umumiy token."""
-    if token != ACCESS_TOKEN:
+    """Ustoz va admin: ism + ruxsat etilgan token (whitelist)."""
+    if token not in STAFF_TOKENS:
         c.close()
         raise HTTPException(401, "Token noto'g'ri")
 

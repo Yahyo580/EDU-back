@@ -5,6 +5,16 @@ import os
 # Ustoz va adminlar shu token bilan kiradi.
 ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN", "8017758520")
 
+# Admin/ustoz kirishi uchun ruxsat etilgan tokenlar (faqat shu ro'yxat).
+STAFF_TOKENS = set(
+    t.strip()
+    for t in os.environ.get(
+        "STAFF_TOKENS",
+        "8474745373,1561050587,1727203202,7957568955,7503774554,8017758520",
+    ).split(",")
+    if t.strip()
+)
+
 # SQLite baza fayli. Railway/Volumes da doimiy saqlash uchun DB_PATH ni
 # volume papkasiga ko'rsatish kifoya (masalan: /data/edu.db).
 DB_PATH = os.environ.get("DB_PATH", "edu.db")
