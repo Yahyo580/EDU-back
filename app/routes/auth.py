@@ -42,19 +42,37 @@ def login(data: LoginIn):
     return clean_row(user)
 
 
-def login_student(c, user, name, password):
-    """O'quvchi: ism + doimiy parol. Birinchi marta kirsa - ro'yxatdan o'tadi."""
-    if len(password) < 4:
-        c.close()
-        raise HTTPException(400, "Parol kamida 4 ta belgidan iborat bo'lsin")
+WEAK_MSG = "Parol murakkab bo'lishi shart: kamida 8 ta belgi, ichida harf, raqam va belgi bo'lsin"
 
+
+def weak_password(password: str) -> bool:
+    """Parol murakkabligi: >=8 belgi, harf + raqam + belgi bo'lishi kerak."""
+    if len(password) < 8:
+        return True
+    if not any(ch.isalpha() for ch in password):
+        return True
+    if not any(ch.isdigit() for ch in password):
+        return True
+    if not any(not ch.isalnum() for ch in password):
+        return True
+    return False
+
+
+def login_student(c, user, name, password):
+    """O'quvchi: ism + doimiy parol. Yangi parol murakkab bo'lishi shart."""
     if user is None:
+        if weak_password(password):
+            c.close()
+            raise HTTPException(400, WEAK_MSG)
         c.execute(
             "INSERT INTO users(name, role, password, status) VALUES(?,?,?,?)",
             (name, "student", password, "viewer"),
         )
     elif not user["password"]:
         # Ustoz oldindan qo'shgan bo'lsa, birinchi kirish parolni belgilaydi.
+        if weak_password(password):
+            c.close()
+            raise HTTPException(400, WEAK_MSG)
         c.execute("UPDATE users SET password=? WHERE id=?", (password, user["id"]))
     elif user["password"] != password:
         c.close()

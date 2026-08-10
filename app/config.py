@@ -6,11 +6,12 @@ import os
 ACCESS_TOKEN = os.environ.get("ACCESS_TOKEN", "8017758520")
 
 # Admin/ustoz kirishi uchun ruxsat etilgan tokenlar (faqat shu ro'yxat).
+# Diqqat: "8017758520" ilgari login formada ko'rinib qolgan edi, endi u o'chirilgan.
 STAFF_TOKENS = set(
     t.strip()
     for t in os.environ.get(
         "STAFF_TOKENS",
-        "8474745373,1561050587,1727203202,7957568955,7503774554,8017758520",
+        "8474745373,1561050587,1727203202,7957568955,7503774554",
     ).split(",")
     if t.strip()
 )
